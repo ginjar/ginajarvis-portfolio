@@ -1,6 +1,10 @@
 import React, { Component } from "react";
 import axios from "axios";
+import ReactHtmlParser from "react-html-parser";
 
+
+import BlogFeaturedImage from "../blogs/blog-featured-image";
+import BlogForm from "../blogs/blog-form";
 
 export default class BlogDetail extends Component {
     constructor(props) {
@@ -8,15 +12,29 @@ export default class BlogDetail extends Component {
 
         this.state = {
             currentId: this.props.match.params.slug,
-            blogItem: {}
+            blogItem: {},
+            editMode: false
 
         };
+        this.handleEditClick = this.handleEditClick.bind(this);
+        this.handleFeaturedImageDelete = this.handleFeaturedImageDelete.bind(this);
+    }
+    handleFeaturedImageDelete() {
+        this.setState({
+            blogItem: {
+                featured_image_url: ""
+            }
+        })
+    }
+    handleEditClick() {
+        console.log("handle edit click");
+        this.setState({ editMode: true });
     }
     getBlogItem() {
         axios
             .get(
-            `https://ginajarvis.devcamp.space/portfolio/portfolio_blogs/${this.state.currentId}`
-        )
+                `https://ginajarvis.devcamp.space/portfolio/portfolio_blogs/${this.state.currentId}`
+            )
             .then(response => {
               
                 this.setState({
@@ -24,8 +42,8 @@ export default class BlogDetail extends Component {
                 });
             })
             .catch(err => {
-            console.log("getBlogItem error", err);
-        });
+                console.log("getBlogItem error", err);
+            });
     }
 
     componentDidMount() {
@@ -34,21 +52,34 @@ export default class BlogDetail extends Component {
   
     render() {
         const {
-          title,
-          content,
-          featured_image_url,
-          blog_status
+            title,
+            content,
+            featured_image_url,
+            blog_status
         } = this.state.blogItem;
+       
+       
+        const contentManager = () => {
+            if (this.state.editMode) {
+                return (
+                    <BlogForm handleFeaturedImageDelete={this.handleFeaturedImageDelete}
+                    editMode={this.state.editMode}
+                    blog={this.state.blogItem} />
+                );
+            } else {
+                return (
+                         <div className="content-container">
+                        <h3 onClick={this.handleEditClick}>{title}</h3>
+                        
+
+                            <BlogFeaturedImage img={featured_image_url} />
     
-        return (
-          <div className = "blog-container">
-                <div className ="content-container">
-                    <h3>{title}</h3>
-                  
-                <img className ="featured-image-wrapper" src={featured_image_url} />
-                    <div>{content}</div>
-                 </div>
-          </div>
-        );
-      }
+                        <div className="content">{ReactHtmlParser(content)}</div>
+                    </div>
+                );
+            }
+        }
+        return <div className="blog-container">{contentManager()}</div>
     }
+}
+        
