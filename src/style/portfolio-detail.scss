@@ -1,0 +1,32 @@
+.portfolio-detail-container{
+    width: 100vw;
+    display: flex;
+    
+  .portfolio-detail-wrapper{
+      width:100%;
+      display: grid;
+      justify-content: space-between;
+      grid-template-columns: 1fr 1fr;
+  }  
+.portfolio-detail-left{
+ align-items: left;
+ justify-content: left;
+
+}
+.portfolio-detail-right{
+    align-content: center;
+    justify-content: right;
+}
+.banner{
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0px 15px 20px rgba(0,0,0,0.5);
+}
+.description-detail{
+    width: 700px;
+    font:2em;
+
+}
+}

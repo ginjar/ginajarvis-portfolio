@@ -24,7 +24,7 @@ export default class Auth extends Component {
             return (
                 <div className="auth-page-wrapper">
                     <div
-                        className="left-column"
+                        className="left-column-auth"
                         style={{
                             backgroundImage: `url(${loginImg})`
                         }}
@@ -32,7 +32,7 @@ export default class Auth extends Component {
 
 
 
-                    <div className="right-column">
+                    <div className="right-column-auth">
                         <Login
                             handleSuccessfulAuth={this.handleSuccessfulAuth}
                             handleUnSuccessfulAuth ={this.handleUnSuccessfulAuth}

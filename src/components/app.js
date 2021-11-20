@@ -20,13 +20,15 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     Icons();
+    
     this.state = {
       loggedInStatus: "NOT_LOGGED_IN"
     };
     this.handleSuccessfulLogin = this.handleSuccessfulLogin.bind(this);
     this.handleUnSuccessfulLogin = this.handleUnSuccessfulLogin.bind(this);
     this.handleSuccessfulLogout = this.handleSuccessfulLogout.bind(this);
-}
+  }
+  
 handleSuccessfulLogin() {
   this.setState({
     loggedInStatus: "LOGGED_IN"
@@ -38,15 +40,18 @@ handleUnSuccessfulLogin() {
     loggedInStatus: "NOT_LOGGED_IN"
   });
 }
+  
 handleSuccessfulLogout() {
   this.setState({
     loggedInStatus: "NOT_LOGGED_IN"
   });
 }
   checkLogInStatus() {
-    return axios.get("https://api.devcamp.space/logged_in", {
+    return axios
+      .get("https://api.devcamp.space/logged_in", {
       withCredentials: true
-    }).then(response => {
+      })
+      .then(response => {
       const loggedIn = response.data.logged_in;
       const loggedInStatus = this.state.loggedInStatus;
       console.log("logged_in status", response);
@@ -72,8 +77,15 @@ handleSuccessfulLogout() {
   componentDidMount() {
     this.checkLogInStatus();
   }
+
   authorizedPages() {
-    return [<Route key ="portfio-manager" path="/portfolio-manager" component={PortfolioManager} />];
+    return[
+      <Route
+      key="portfio-manager"
+      path="/portfolio-manager"
+      component={PortfolioManager}
+       />
+    ];
   }
 
   render() {
@@ -109,13 +121,25 @@ handleSuccessfulLogout() {
               <Route
                 exact path="/portfolio/:slug"
                 component={PortfolioDetail} />
-              <Route path="/about-me" component={About} />
+              
+             
               <Route path="/blog" 
                 render={props => (
                   <Blog {...props} loggedInStatus = {this.state.loggedInStatus} />
                 )}
                 />
-              <Route path="/b/:slug" component={BlogDetail} />
+              <Route
+                path="/b/:slug"
+                render={props => (
+                  <BlogDetail
+                    {...props}
+                    loggedInStatus={this.state.loggedInStatus}
+                  />
+                )}
+              />
+               {this.state.loggedInStatus === "LOGGED_IN"
+                ? this.authorizedPages()
+              : null}
               <Route component={NoMatch} />
             </Switch>
           </div>

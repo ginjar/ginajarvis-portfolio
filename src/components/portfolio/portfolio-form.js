@@ -151,6 +151,7 @@ export default class PortfolioForm extends Component {
         }
 
         this.setState({
+          
           name: "",
           description: "",
           category: "ecommerce",

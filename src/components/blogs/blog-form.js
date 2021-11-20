@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import DropzoneComponent from "react-dropzone-component";
+import {DropzoneComponent} from "react-dropzone-component";
 import RichTextEditor from "../forms/rich-text-editor";
 
 export default class BlogForm extends Component {
@@ -12,7 +12,9 @@ export default class BlogForm extends Component {
             title: "",
             blog_status: "",
             content: "",
-            featured_image: ""
+            featured_image: "",
+            apiURL: "https://ginajarvis.devcamp.space/portfolio/portfolio_blogs",
+            apiAction: "post"
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -44,7 +46,10 @@ export default class BlogForm extends Component {
             this.setState({
                 id: this.props.blog.id,
                 title: this.props.blog.title,
-                status: this.props.blog.status
+                blog_status: this.props.blog_status,
+                content: this.props.blog.content,
+                apiUrl: `https://ginajarvis.devcamp.space/portfolio/portfolio_blogs/${this.props.blog.id}`,
+                apiAction: "patch"
 
             })
         }
@@ -94,12 +99,12 @@ export default class BlogForm extends Component {
 
 
     handleSubmit(event) {
-        axios
-            .post(
-                "https://ginajarvis.devcamp.space/portfolio/portfolio_blogs",
-                this.buildForm(),
-                { withCredentials: true }
-            )
+        axios({
+            method: this.state.apiAction,
+            url: this.state.apiUrl,
+            data: this.buildForm(),
+            withCredentials: true
+          })
             .then(response => {
                 if (this.state.featured_image) { 
                     this.featuredImageRef.current.dropzone.removeAllFiles();
@@ -111,10 +116,15 @@ export default class BlogForm extends Component {
                     content: "",
                     featured_image: ""
                 });
-
-                this.props.handleSuccessfullFormSubmission(
-                    response.data.portfolio_blog
-                );
+                
+                
+                if (this.props.editMode) {
+                    this.props.handleUpdateFormSubmission(response.data.portfolio_blog);
+                } else {
+                    this.props.handleSuccessfullFormSubmission(
+                        response.data.portfolio_blog
+                    );
+                }
             })
             .catch(err => {
                 console.log("handle successful blog form error", err);
